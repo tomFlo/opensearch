@@ -1,0 +1,74 @@
+POST {{host}}/semantic_full_gd_2023_last30/_search
+Content-Type: application/json
+Accept: application/json
+Authorization: Basic {{token}}
+
+{
+  "_source": {
+    "includes": [
+      "name",
+      "updatedDate"
+    ]
+  },
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "script_score": {
+            "query": {
+              "query_string": {
+                "query": "gas price changes in West Virginia",
+                "fields": [
+                  "content"
+                ]
+              }
+            },
+            "script": {
+              "source": "_score * (decayDateGauss(params.origin, params.scale, params.offset, params.decay, doc['updatedDate'].value) + 0.1)",
+              "params": {
+                "origin": "2023-07-22",
+                "scale": "3d",
+                "offset": "0",
+                "decay": 0.75
+              }
+            }
+          }
+        },
+        {
+          "script_score": {
+            "query": {
+              "neural": {
+                "content_v": {
+                  "query_text": "gas price changes in West Virginia",
+                  "model_id": "I_vPKIsBLTmOLw6pKofP",
+                  "k": 100
+                }
+              }
+            },
+            "script": {
+              "source": "_score * 60 * (decayDateGauss(params.origin, params.scale, params.offset, params.decay, doc['updatedDate'].value) + 0.1)",
+              "params": {
+                "origin": "2023-07-22",
+                "scale": "3d",
+                "offset": "0",
+                "decay": 0.75
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "collapse": {
+    "field": "_attributes.id.keyword"
+  },
+  "size": 10,
+  "highlight": {
+    "fields": {
+      "envelope.content.body": {},
+      "content": {}
+    },
+    "fragment_size": 300
+  },
+  "explain": true
+}

@@ -1,0 +1,37 @@
+POST {{host}}/semantic_full_gd_2023_last30/_search
+Content-Type: application/json
+Accept: application/json
+Authorization: Basic {{token}}
+
+{
+  "_source": {
+    "includes": [
+      "name",
+      "updatedDate"
+    ]
+  },
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "query_string": {
+            "query": "gas price changes in West Virginia",
+            "fields": [
+              "content"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "collapse": {
+    "field": "_attributes.id.keyword"
+  },
+  "size": 10,
+  "highlight": {
+    "fields": {
+      "content": {}
+    },
+    "fragment_size": 300
+  }
+}

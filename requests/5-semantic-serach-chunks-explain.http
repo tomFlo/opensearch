@@ -1,0 +1,40 @@
+POST {{host}}/semantic_chunks_gd_2023_last30/_search
+Content-Type: application/json
+Accept: application/json
+Authorization: Basic {{token}}
+
+{
+  "_source": {
+    "includes": [
+      "name",
+      "updatedDate"
+    ]
+  },
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "neural": {
+            "content_v": {
+              "query_text": "gas price changes in West Virginia",
+              "model_id": "I_vPKIsBLTmOLw6pKofP",
+              "k": 100
+            }
+          }
+        }
+      ]
+    }
+  },
+  "collapse": {
+    "field": "_attributes.id.keyword"
+  },
+  "size": 10,
+  "highlight": {
+    "fields": {
+      "envelope.content.body": {},
+      "content": {}
+    },
+    "fragment_size": 300
+  },
+  "explain": true
+}
