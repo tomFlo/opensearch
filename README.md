@@ -1,5 +1,28 @@
-# Unconference: Hybrid Search
+# Hybrid Search
 Hybrid Search Learning
+
+## Project preparation
+VS Code: create file under [.vscode](.vscode) directory with below content
+```json
+{
+    "rest-client.environmentVariables": {
+        "dev": {
+            "host": "https://opensearch",
+            "token": "token"
+        }
+    }
+}
+```
+
+IntellJ IDEA: create http-client.private.env.json file in [requests](requests) directory with content
+```json
+{
+  "dev": {
+    "host": "https://opensearch",
+    "token": "token"
+  }
+}
+```
 
 ## Standard (keyword) search
 Standard search, also known as keyword-based search, is the traditional method of retrieving information from a database or the internet. It relies on the use of keywords or phrases provided by the user to match and retrieve relevant documents or web pages. Standard search relies on keywords provided by users. It begins with indexing, creating a catalog of keywords for each document. When users enter a query, the search engine compares it to the indexed keywords, ranks matching documents based on relevance, and displays results for users to click and access the relevant content. While efficient for specific queries, standard search may struggle with ambiguous or context-dependent searches.  
