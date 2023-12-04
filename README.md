@@ -69,17 +69,35 @@ One of additional strategies for better accuracy of semantic search is data chun
 ## Hybrid Search
 Hybrid search combines both standard and semantic searches together getting best from both.  
 
-Main problem in combining standard search and semantic search in out query is different algorithm used to calculate relevancy score. K-NN method returns relevancy score in scale from 0 to 1 when Standards search (BM25) returns it in scale from 0 to Max.Integer. This leads in some cases to keeping semantic results on back of the list.  
+Main problem in combining standard search and semantic search in one query is different algorithm used to calculate relevancy score. K-NN method returns relevancy score in scale from 0 to 1 when Standards search (BM25) returns it in scale from 0 to Max.Integer. This leads in some cases to keeping semantic results on back of the list.  
 
 
 [6-hybrid-serach-basic.http](requests%2F6-hybrid-serach-basic.http)  
 [7-hybrid-serach-basic-explain.http](requests%2F7-hybrid-serach-basic-explain.http)
 
 ## Hybrid Search: Hybrid Query
-OpenSearch 2.11 introduced a new type of query: hybrid search. It allows to create post-processing normalization pipeline which takes relevancy scoring from different algorithms and bring them to common scale.
+OpenSearch 2.11 introduced a new type of query: hybrid search. It allows to create post-processing normalization pipeline which takes relevancy scoring from different algorithms and brings them to common scale.
 
 Docs: https://opensearch.org/docs/latest/search-plugins/hybrid-search/
 
 [8-hybrid-serach.http](requests%2F8-hybrid-serach.http)  
 [9-hybrid-serach-explain.http](requests%2F9-hybrid-serach-explain.http)
 
+## Hybrid Search: Custom Query with Bumping the Score 
+Hybrid Search introduced in 2.11 is quite new thing and it has some limitations.
+
+Other option to do a working hybrid search is to bump up semantic search by multiplying its score by certain number which will bring its values closer to BM25 algorithm. It's not ideal as it depends on the query and how big relevancy score it will get from BM25 algorithm. On the other hand it gives us possibility to dynamically change semantic search impact on overall results.
+
+[10-hybrid-serach-custom.http](requests%2F10-hybrid-serach-custom.http)  
+[11-hybrid-serach-custom-explain.http](requests%2F11-hybrid-serach-custom-explain.http)
+
+## Hybrid Search: Custom Query and Latest on Top
+In some circumstances it is desired to show latest documents on top of results, like in case of news where latest will be more preferred by users. This could be done by simply ordering results by document data although such approach looses information about relevancy scoring.  
+
+Better option is to include additional script score logic which takes into consideration document date and returns bigger relevancy score if the document is closer to current date. This way we can bump up latest documents still remaining some level of relevancy score in returned list.
+
+Docs: https://opensearch.org/docs/latest/query-dsl/specialized/script-score/  
+Docs: https://opensearch.org/docs/latest/query-dsl/compound/function-score#decay-functions
+
+[12-hybrid-serach-custom-latest-on-top.http](requests%2F12-hybrid-serach-custom-latest-on-top.http)  
+[13-hybrid-serach-custom-latest-on-top-explain.http](requests%2F13-hybrid-serach-custom-latest-on-top-explain.http)
